@@ -5,6 +5,7 @@ import (
 	"blog/internal/model"
 	"blog/internal/repository"
 	"fmt"
+	"log"
 )
 
 func Run(conf config.Config) error {
@@ -15,6 +16,10 @@ func Run(conf config.Config) error {
 	if err := repo.Migrate(&model.Post{}); err != nil {
 		return fmt.Errorf("repo.Migrate: %v", err)
 	}
+	if err := repo.Migrate(&model.Comment{}); err != nil {
+		return fmt.Errorf("repo.Migrate: %v", err)
+	}
+
 	for {
 		var opt int
 		fmt.Print("Menu:\n",
@@ -32,13 +37,21 @@ func Run(conf config.Config) error {
 
 		switch opt {
 		case 1:
-			repo.Create()
+			if err = repo.Create(); err != nil {
+				log.Printf("error: repo.Create: %v", err)
+			}
 		case 2:
-			repo.Read()
+			if err = repo.Read(); err != nil {
+				log.Printf("error: repo.Read: %v", err)
+			}
 		case 3:
-			repo.Update()
+			if err = repo.Update(); err != nil {
+				log.Printf("error: repo.Update: %v", err)
+			}
 		case 4:
-			repo.Delete()
+			if err = repo.Delete(); err != nil {
+				log.Printf("error: repo.Delete: %v", err)
+			}
 		case 9:
 			return nil
 		default:
